@@ -5,387 +5,339 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Compressor</title>
     <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --border-color: #cccccc;
+            --secondary-text: #666666;
+            --accent-color: #000000;
+            --light-gray: #f5f5f5;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 800px;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
             margin: 0 auto;
         }
 
         h1 {
-            text-align: center;
-            color: white;
-            font-weight: 300;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
         }
 
-        .subtitle {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            margin-bottom: 40px;
-            font-weight: 300;
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
+        p.subtitle {
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+            margin-bottom: 2rem;
         }
 
         .drop-zone {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 60px 40px;
+            border: 2px dashed var(--border-color);
+            padding: 3rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8f9ff;
+            transition: border-color 0.2s, background-color 0.2s;
+            margin-bottom: 2rem;
         }
 
-        .drop-zone:hover,
-        .drop-zone.dragover {
-            border-color: #764ba2;
-            background: #f0f2ff;
-            transform: scale(1.02);
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--accent-color);
+            background-color: var(--light-gray);
         }
 
-        .drop-zone-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.6;
-        }
-
-        .drop-zone-text {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .drop-zone-hint {
+        .drop-zone p {
             font-size: 0.9rem;
-            color: #999;
+            color: var(--secondary-text);
+        }
+
+        .drop-zone strong {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        .settings {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        input[type="range"], select, input[type="number"] {
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            background: white;
+            font-family: inherit;
+            color: var(--text-color);
+            outline: none;
+        }
+
+        input[type="range"] {
+            width: 150px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+        }
+
+        .stat-item {
+            text-align: left;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 20px;
+            border: 1px solid var(--accent-color);
+            padding: 2px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.2s;
+        }
+
+        .progress-text {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+
+        .file-list {
+            list-style: none;
+            border: 1px solid var(--border-color);
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-meta {
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+        }
+
+        .file-status {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .status-pending { color: var(--secondary-text); }
+        .status-processing { color: var(--accent-color); font-style: italic; }
+        .status-done { color: var(--accent-color); font-weight: bold; }
+
+        .btn {
+            background: white;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 0.75rem 1.5rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            display: inline-block;
+            text-decoration: none;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--light-gray);
+            color: var(--secondary-text);
+            border-color: var(--border-color);
+        }
+
+        .actions {
+            text-align: right;
+            margin-top: 2rem;
         }
 
         #fileInput {
             display: none;
         }
 
-        .settings {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .setting-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .setting-label {
-            display: block;
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .setting-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .setting-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 10px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            letter-spacing: 1px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .progress-container {
-            margin-top: 30px;
-            display: none;
-        }
-
-        .progress-bar-wrapper {
-            background: #e0e0e0;
-            border-radius: 10px;
-            height: 8px;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s ease;
-            border-radius: 10px;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .image-list {
-            margin-top: 30px;
-        }
-
-        .image-list-header {
-            font-size: 1.2rem;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .image-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: #f8f9ff;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .image-item:hover {
-            background: #f0f2ff;
-            transform: translateX(5px);
-        }
-
-        .image-preview {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-right: 15px;
-        }
-
-        .image-info {
-            flex: 1;
-        }
-
-        .image-name {
-            font-size: 0.95rem;
-            color: #333;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .image-details {
-            font-size: 0.85rem;
-            color: #666;
-        }
-
-        .image-status {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-processing {
-            background: #cce5ff;
-            color: #004085;
-        }
-
-        .status-done {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #f0f0f0;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: #999;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
         @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .card {
-                padding: 25px;
-            }
-
-            .drop-zone {
-                padding: 40px 20px;
-            }
-
-            .settings {
-                flex-direction: column;
-            }
-
-            .setting-group {
-                width: 100%;
-            }
+            body { padding: 1rem; }
+            .settings { flex-direction: column; gap: 1rem; }
+            .file-item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .actions { text-align: left; }
+            .btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🖼️ Image Compressor</h1>
-        <p class="subtitle">Compress multiple images instantly • Client-side processing</p>
 
-        <div class="card">
-            <div class="drop-zone" id="dropZone">
-                <div class="drop-zone-icon">📁</div>
-                <div class="drop-zone-text">Drop your images here</div>
-                <div class="drop-zone-hint">or click to browse • Supports JPG, PNG, WebP</div>
-            </div>
-            <input type="file" id="fileInput" accept="image/*" multiple>
+    <h1>Image Compressor</h1>
+    <p class="subtitle">Minimalist • Classic • Monochrome</p>
 
-            <div class="settings">
-                <div class="setting-group">
-                    <label class="setting-label">Quality (1-100%)</label>
-                    <input type="number" id="quality" class="setting-input" value="70" min="1" max="100">
-                </div>
-                <div class="setting-group">
-                    <label class="setting-label">Max Width (px)</label>
-                    <input type="number" id="maxWidth" class="setting-input" placeholder="No limit" min="1">
-                </div>
-                <div class="setting-group">
-                    <label class="setting-label">Output Format</label>
-                    <select id="format" class="setting-input">
-                        <option value="image/jpeg">JPEG</option>
-                        <option value="image/png">PNG</option>
-                        <option value="image/webp">WebP</option>
-                        <option value="original">Original</option>
-                    </select>
-                </div>
-                <button class="btn" id="compressBtn" disabled>Compress Images</button>
-            </div>
+    <div class="drop-zone" id="dropZone">
+        <p>Drag & Drop images here or <strong>Click to Browse</strong></p>
+        <input type="file" id="fileInput" multiple accept="image/*">
+    </div>
 
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar-wrapper">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                <div class="progress-info">
-                    <span id="progressText">Processing...</span>
-                    <span id="progressPercent">0%</span>
-                </div>
-            </div>
-
-            <div class="image-list hidden" id="imageList">
-                <div class="image-list-header">📋 Selected Images</div>
-                <div id="imageItems"></div>
-
-                <div class="stats" id="stats">
-                    <div class="stat-item">
-                        <div class="stat-value" id="totalFiles">0</div>
-                        <div class="stat-label">Total Files</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="originalSize">0 MB</div>
-                        <div class="stat-label">Original Size</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="compressedSize">0 MB</div>
-                        <div class="stat-label">Compressed Size</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="savedPercent">0%</div>
-                        <div class="stat-label">Space Saved</div>
-                    </div>
-                </div>
-            </div>
+    <div class="settings">
+        <div class="setting-group">
+            <label for="quality">Quality (<span id="qualityValue">80</span>%)</label>
+            <input type="range" id="quality" min="1" max="100" value="80">
+        </div>
+        <div class="setting-group">
+            <label for="format">Output Format</label>
+            <select id="format">
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/png">PNG</option>
+                <option value="image/webp">WebP</option>
+            </select>
+        </div>
+        <div class="setting-group">
+            <label for="maxWidth">Max Width (px)</label>
+            <input type="number" id="maxWidth" placeholder="Original" style="width: 100px;">
         </div>
     </div>
+
+    <div class="stats" id="statsContainer" style="display:none;">
+        <div class="stat-item">
+            <div class="stat-label">Total Files</div>
+            <div class="stat-value" id="totalFiles">0</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Original Size</div>
+            <div class="stat-value" id="originalSize">0 KB</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Compressed Size</div>
+            <div class="stat-value" id="compressedSize">0 KB</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Saved</div>
+            <div class="stat-value" id="savedPercent">0%</div>
+        </div>
+    </div>
+
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">Processing 0/0...</div>
+    </div>
+
+    <ul class="file-list" id="fileList">
+    </ul>
+
+    <div class="actions">
+        <button class="btn" id="compressBtn" disabled>Compress Images</button>
+        <a id="downloadAllBtn" class="btn" style="display:none;">Download All (ZIP)</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <script>
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
+        const fileListEl = document.getElementById('fileList');
         const compressBtn = document.getElementById('compressBtn');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const qualityInput = document.getElementById('quality');
+        const qualityValue = document.getElementById('qualityValue');
+        const formatInput = document.getElementById('format');
+        const maxWidthInput = document.getElementById('maxWidth');
+        
+        const statsContainer = document.getElementById('statsContainer');
+        const totalFilesEl = document.getElementById('totalFiles');
+        const originalSizeEl = document.getElementById('originalSize');
+        const compressedSizeEl = document.getElementById('compressedSize');
+        const savedPercentEl = document.getElementById('savedPercent');
+        
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
         const progressText = document.getElementById('progressText');
-        const progressPercent = document.getElementById('progressPercent');
-        const imageList = document.getElementById('imageList');
-        const imageItems = document.getElementById('imageItems');
-        const qualityInput = document.getElementById('quality');
-        const maxWidthInput = document.getElementById('maxWidth');
-        const formatSelect = document.getElementById('format');
 
-        let selectedFiles = [];
-        let compressedFiles = [];
+        let filesToProcess = [];
+        let processedFiles = [];
 
-        // Drag and drop handlers
+        qualityInput.addEventListener('input', (e) => {
+            qualityValue.textContent = e.target.value;
+        });
+
         dropZone.addEventListener('click', () => fileInput.click());
         
         dropZone.addEventListener('dragover', (e) => {
@@ -405,168 +357,180 @@
 
         fileInput.addEventListener('change', (e) => {
             handleFiles(e.target.files);
+            fileInput.value = '';
         });
 
         function handleFiles(files) {
             const newFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+            
             if (newFiles.length === 0) return;
 
-            selectedFiles = [...selectedFiles, ...newFiles];
-            updateImageList();
+            newFiles.forEach(file => {
+                filesToProcess.push({
+                    file: file,
+                    id: Date.now() + Math.random(),
+                    status: 'pending',
+                    originalSize: file.size
+                });
+            });
+
+            renderFileList();
+            updateStats();
             compressBtn.disabled = false;
+            downloadAllBtn.style.display = 'none';
+            statsContainer.style.display = 'grid';
         }
 
-        function formatFileSize(bytes) {
+        function formatBytes(bytes, decimals = 2) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
             const sizes = ['Bytes', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         }
 
-        function updateImageList() {
-            imageList.classList.remove('hidden');
-            imageItems.innerHTML = '';
-
-            let totalOriginalSize = 0;
-
-            selectedFiles.forEach((file, index) => {
-                totalOriginalSize += file.size;
+        function renderFileList() {
+            fileListEl.innerHTML = '';
+            filesToProcess.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'file-item';
                 
-                const item = document.createElement('div');
-                item.className = 'image-item';
-                item.id = `item-${index}`;
+                let statusClass = 'status-pending';
+                let statusText = 'Waiting';
+                
+                if (item.status === 'processing') {
+                    statusClass = 'status-processing';
+                    statusText = 'Compressing...';
+                } else if (item.status === 'done') {
+                    statusClass = 'status-done';
+                    statusText = 'Done';
+                }
 
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    item.innerHTML = `
-                        <img src="${e.target.result}" class="image-preview" alt="${file.name}">
-                        <div class="image-info">
-                            <div class="image-name">${file.name}</div>
-                            <div class="image-details">${formatFileSize(file.size)}</div>
-                        </div>
-                        <div class="image-status status-pending" id="status-${index}">Pending</div>
-                    `;
-                };
-                reader.readAsDataURL(file);
-
-                imageItems.appendChild(item);
+                li.innerHTML = `
+                    <div class="file-info">
+                        <span class="file-name">${item.file.name}</span>
+                        <span class="file-meta">
+                            Original: ${formatBytes(item.originalSize)} 
+                            ${item.compressedSize ? `→ ${formatBytes(item.compressedSize)}` : ''}
+                        </span>
+                    </div>
+                    <span class="file-status ${statusClass}">${statusText}</span>
+                `;
+                fileListEl.appendChild(li);
             });
-
-            document.getElementById('totalFiles').textContent = selectedFiles.length;
-            document.getElementById('originalSize').textContent = formatFileSize(totalOriginalSize);
         }
 
-        async function compressImage(file, quality, maxWidth, format) {
+        function updateStats() {
+            const total = filesToProcess.length;
+            const originalTotal = filesToProcess.reduce((sum, item) => sum + item.originalSize, 0);
+            const compressedTotal = filesToProcess.reduce((sum, item) => sum + (item.compressedSize || 0), 0);
+            
+            totalFilesEl.textContent = total;
+            originalSizeEl.textContent = formatBytes(originalTotal);
+            compressedSizeEl.textContent = formatBytes(compressedTotal);
+            
+            if (originalTotal > 0 && compressedTotal > 0) {
+                const saved = ((originalTotal - compressedTotal) / originalTotal) * 100;
+                savedPercentEl.textContent = saved.toFixed(1) + '%';
+                savedPercentEl.style.color = saved > 0 ? 'black' : '#666';
+            } else {
+                savedPercentEl.textContent = '0%';
+            }
+        }
+
+        async function compressImage(fileItem) {
             return new Promise((resolve) => {
                 const img = new Image();
-                const reader = new FileReader();
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
 
-                reader.onload = (e) => {
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
 
-                        if (maxWidth && width > maxWidth) {
-                            height = (height * maxWidth) / width;
-                            width = maxWidth;
-                        }
+                    const maxWidth = parseInt(maxWidthInput.value);
+                    if (maxWidth && width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
 
-                        canvas.width = width;
-                        canvas.height = height;
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    if (formatInput.value === 'image/jpeg') {
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, width, height);
+                    }
 
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
 
-                        const outputFormat = format === 'original' ? file.type : format;
-                        
-                        canvas.toBlob((blob) => {
-                            resolve({
-                                blob: blob,
-                                originalSize: file.size,
-                                compressedSize: blob.size,
-                                name: file.name
-                            });
-                        }, outputFormat, quality / 100);
-                    };
-                    img.src = e.target.result;
+                    canvas.toBlob((blob) => {
+                        resolve(blob);
+                    }, formatInput.value, parseInt(qualityInput.value) / 100);
                 };
-                reader.readAsDataURL(file);
-            });
-        }
 
-        async function downloadFile(blob, filename) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            
-            const nameParts = filename.split('.');
-            const ext = blob.type.split('/')[1] || 'jpg';
-            nameParts.pop();
-            a.download = `${nameParts.join('.')}_compressed.${ext}`;
-            
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+                img.onerror = () => resolve(null);
+                img.src = URL.createObjectURL(fileItem.file);
+            });
         }
 
         compressBtn.addEventListener('click', async () => {
-            if (selectedFiles.length === 0) return;
-
             compressBtn.disabled = true;
             progressContainer.style.display = 'block';
-            compressedFiles = [];
+            processedFiles = [];
+            
+            const total = filesToProcess.length;
 
-            const quality = parseInt(qualityInput.value) || 70;
-            const maxWidth = parseInt(maxWidthInput.value) || null;
-            const format = formatSelect.value;
-
-            let totalOriginal = 0;
-            let totalCompressed = 0;
-
-            for (let i = 0; i < selectedFiles.length; i++) {
-                const file = selectedFiles[i];
-                const statusEl = document.getElementById(`status-${i}`);
+            for (let i = 0; i < filesToProcess.length; i++) {
+                const item = filesToProcess[i];
+                item.status = 'processing';
+                renderFileList();
                 
-                statusEl.textContent = 'Processing...';
-                statusEl.className = 'image-status status-processing';
+                progressText.textContent = `Processing ${i + 1}/${total}...`;
+                progressBar.style.width = `${((i) / total) * 100}%`;
 
-                const result = await compressImage(file, quality, maxWidth, format);
-                compressedFiles.push(result);
+                const blob = await compressImage(item);
+                
+                if (blob) {
+                    item.compressedSize = blob.size;
+                    item.blob = blob;
+                    item.status = 'done';
+                    processedFiles.push({
+                        name: item.file.name.split('.')[0] + '_min.' + (formatInput.value.split('/')[1]),
+                        blob: blob
+                    });
+                } else {
+                    item.status = 'error';
+                }
 
-                totalOriginal += result.originalSize;
-                totalCompressed += result.compressedSize;
-
-                statusEl.textContent = 'Done ✓';
-                statusEl.className = 'image-status status-done';
-
-                const percent = Math.round(((i + 1) / selectedFiles.length) * 100);
-                progressBar.style.width = `${percent}%`;
-                progressPercent.textContent = `${percent}%`;
-                progressText.textContent = `Processed ${i + 1} of ${selectedFiles.length}`;
-
-                await new Promise(resolve => setTimeout(resolve, 100));
+                renderFileList();
+                updateStats();
+                
+                await new Promise(r => setTimeout(r, 50));
             }
 
-            const savedPercent = Math.round(((totalOriginal - totalCompressed) / totalOriginal) * 100);
+            progressBar.style.width = '100%';
+            progressText.textContent = 'Completed!';
             
-            document.getElementById('compressedSize').textContent = formatFileSize(totalCompressed);
-            document.getElementById('savedPercent').textContent = `${Math.max(0, savedPercent)}%`;
-
-            progressText.textContent = 'Compression Complete!';
-            
-            setTimeout(() => {
-                compressedFiles.forEach((file, index) => {
-                    setTimeout(() => {
-                        downloadFile(file.blob, file.name);
-                    }, index * 200);
-                });
-            }, 500);
-
+            downloadAllBtn.style.display = 'inline-block';
+            compressBtn.textContent = 'Compress Again';
             compressBtn.disabled = false;
         });
+
+        downloadAllBtn.addEventListener('click', () => {
+            if (processedFiles.length === 0) return;
+
+            const zip = new JSZip();
+            processedFiles.forEach(file => {
+                zip.file(file.name, file.blob);
+            });
+
+            zip.generateAsync({type:"blob"}).then(function(content) {
+                saveAs(content, "compressed_images.zip");
+            });
+        });
+
     </script>
 </body>
 </html>
